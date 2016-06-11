@@ -34,67 +34,74 @@ import (
 )
 
 type Options struct {
-	BinarySkip         bool   `long:"binary-skip" description:"skip files that seem to be binary"`
-	BinaryAsText       bool   `short:"a" long:"binary-text" description:"process files that seem to be binary as text"`
-	Blocksize          string `long:"blocksize" description:"blocksize in bytes (with optional suffix K|M)"`
-	Color              string
-	ColorFunc          func()   `long:"color" description:"enable colored output (default: auto)" json:"-"`
-	NoColorFunc        func()   `long:"no-color" description:"disable colored output" json:"-"`
-	Context            int      `short:"C" long:"context" description:"show NUM context lines" value-name:"NUM" json:"-"`
-	ContextAfter       int      `short:"A" long:"context-after" description:"show NUM context lines after match" value-name:"NUM" json:"-"`
-	ContextBefore      int      `short:"B" long:"context-before" description:"show NUM context lines before match" value-name:"NUM" json:"-"`
-	Cores              int      `short:"j" long:"cores" description:"limit used CPU Cores (default: 0 = all)" default-mask:"-"`
-	Count              bool     `short:"c" long:"count" description:"print count of matches per file" json:"-"`
-	IncludeDirs        []string `long:"dirs" description:"recurse only into directories whose name matches GLOB" value-name:"GLOB" default-mask:"-"`
-	ErrShowLineLength  bool     `long:"err-show-line-length" description:"show all line length errors"`
-	ErrSkipLineLength  bool     `long:"err-skip-line-length" description:"skip line length errors"`
-	ExcludeDirs        []string `long:"exclude-dirs" description:"do not recurse into directories whose name matches GLOB" value-name:"GLOB" default-mask:"-"`
-	IncludeExtensions  string   `short:"x" long:"ext" description:"limit search to specific file extensions (comma-separated)" default-mask:"-"`
-	ExcludeExtensions  string   `short:"X" long:"exclude-ext" description:"exclude specific file extensions (comma-separated)" default-mask:"-"`
-	IncludeFiles       []string `long:"files" description:"search only files whose name matches GLOB" value-name:"GLOB" default-mask:"-"`
-	ExcludeFiles       []string `long:"exclude-files" description:"do not select files whose name matches GLOB while recursing" value-name:"GLOB" default-mask:"-"`
-	IncludePath        string   `long:"path" description:"search only files whose path matches PATTERN" value-name:"PATTERN" default-mask:"-"`
-	ExcludePath        string   `long:"exclude-path" description:"do not select files whose path matches PATTERN while recursing" value-name:"PATTERN" default-mask:"-"`
-	IncludeTypes       string   `short:"t" long:"type" description:"limit search to specific file types (comma-separated, see --list-types)" default-mask:"-"`
-	ExcludeTypes       string   `short:"T" long:"no-type" description:"exclude specific file types (comma-separated, --list-types)" default-mask:"-"`
-	FilesWithMatches   bool     `short:"l" long:"files-with-matches" description:"list files containing matches"`
-	FilesWithoutMatch  bool     `short:"L" long:"files-without-match" description:"list files containing no match"`
-	Git                bool     `long:"git" description:"respect .gitignore files and skip .git directories"`
-	GroupByFile        bool     `long:"group" description:"group output by file (default: off)"`
-	NoGroupByFile      func()   `long:"no-group" description:"do not group output by file" json:"-"`
-	IgnoreCase         bool     `short:"i" long:"ignore-case" description:"case insensitive (default: off)"`
-	NoIgnoreCase       func()   `short:"I" long:"no-ignore-case" description:"disable case insensitive" json:"-"`
-	NoConfig           bool     `long:"no-conf" description:"do not load config files" json:"-"`
-	InvertMatch        bool     `short:"v" long:"invert-match" description:"select non-matching lines" json:"-"`
-	Limit              int64    `long:"limit" description:"only show first NUM matches per file" value-name:"NUM" default-mask:"-"`
-	Literal            bool     `short:"Q" long:"literal" description:"treat pattern as literal, quote meta characters"`
-	Multiline          bool     `short:"m" long:"multiline" description:"multiline parsing (default: off)"`
-	NoMultiline        func()   `short:"M" long:"no-multiline" description:"disable multiline parsing" json:"-"`
-	OnlyMatching       bool     `long:"only-matching" description:"only show the matching part of a line" json:"-"`
-	Output             string   `short:"o" long:"output" description:"write output to the specified file or network connection" value-name:"FILE|tcp://HOST:PORT" json:"-"`
-	OutputLimit        int      `long:"output-limit" description:"limit output length per found match" default-mask:"-"`
-	OutputSeparator    string   `long:"output-sep" description:"output separator (default: \"\\n\")" default-mask:"-" json:"-"`
-	OutputUnixPath     bool     `long:"output-unixpath" description:"output file paths in unix format ('/' as path separator)"`
-	Patterns           []string `short:"e" long:"regexp" description:"add pattern PATTERN to the search" value-name:"PATTERN" default-mask:"-" json:"-"`
-	PatternFile        string   `short:"f" long:"regexp-file" description:"search for patterns contained in FILE (one per line)" value-name:"FILE" default-mask:"-" json:"-"`
-	PrintConfig        bool     `long:"print-config" description:"print config for loaded configs + given command line arguments" json:"-"`
-	Quiet              bool     `short:"q" long:"quiet" description:"suppress output, exit with return code zero if any match is found" json:"-"`
-	Recursive          bool     `short:"r" long:"recursive" description:"recurse into directories (default: on)"`
-	NoRecursive        func()   `short:"R" long:"no-recursive" description:"do not recurse into directories" json:"-"`
-	Replace            string   `long:"replace" description:"replace numbered or named (?P<name>pattern) capture groups. Use ${1}, ${2}, $name, ... for captured submatches" json:"-"`
-	ShowFilename       string
-	ShowFilenameFunc   func() `long:"filename" description:"enforce printing the filename before results (default: auto)" json:"-"`
-	NoShowFilenameFunc func() `long:"no-filename" description:"disable printing the filename before results" json:"-"`
-	ShowLineNumbers    bool   `short:"n" long:"line-number" description:"show line numbers (default: off)"`
-	NoShowLineNumbers  func() `short:"N" long:"no-line-number" description:"do not show line numbers" json:"-"`
-	Stats              bool   `long:"stats" description:"show statistics"`
-	TargetsOnly        bool   `long:"targets" description:"only list selected files, do not search"`
-	ListTypes          func() `long:"list-types" description:"list available file types" json:"-" default-mask:"-"`
-	Version            func() `short:"V" long:"version" description:"show version and license information" json:"-"`
-	WordRegexp         bool   `short:"w" long:"word-regexp" description:"only match on ASCII word boundaries"`
-	WriteConfig        bool   `long:"write-config" description:"save config for loaded configs + given command line arguments" json:"-"`
-	Zip                bool   `short:"z" long:"zip" description:"search content of compressed .gz files (default: off)"`
-	NoZip              func() `short:"Z" long:"no-zip" description:"do not search content of compressed .gz files" json:"-"`
+	BinarySkip          bool   `long:"binary-skip" description:"skip files that seem to be binary"`
+	BinaryAsText        bool   `short:"a" long:"binary-text" description:"process files that seem to be binary as text"`
+	Blocksize           string `long:"blocksize" description:"blocksize in bytes (with optional suffix K|M)"`
+	Color               string
+	ColorFunc           func()   `long:"color" description:"enable colored output (default: auto)" json:"-"`
+	NoColorFunc         func()   `long:"no-color" description:"disable colored output" json:"-"`
+	Context             int      `short:"C" long:"context" description:"show NUM context lines" value-name:"NUM" json:"-"`
+	ContextAfter        int      `short:"A" long:"context-after" description:"show NUM context lines after match" value-name:"NUM" json:"-"`
+	ContextBefore       int      `short:"B" long:"context-before" description:"show NUM context lines before match" value-name:"NUM" json:"-"`
+	Cores               int      `short:"j" long:"cores" description:"limit used CPU Cores (default: 0 = all)" default-mask:"-"`
+	Count               bool     `short:"c" long:"count" description:"print count of matches per file" json:"-"`
+	IncludeDirs         []string `long:"dirs" description:"recurse only into directories whose name matches GLOB" value-name:"GLOB" default-mask:"-"`
+	ErrShowLineLength   bool     `long:"err-show-line-length" description:"show all line length errors"`
+	ErrSkipLineLength   bool     `long:"err-skip-line-length" description:"skip line length errors"`
+	ExcludeDirs         []string `long:"exclude-dirs" description:"do not recurse into directories whose name matches GLOB" value-name:"GLOB" default-mask:"-"`
+	IncludeExtensions   string   `short:"x" long:"ext" description:"limit search to specific file extensions (comma-separated)" default-mask:"-"`
+	ExcludeExtensions   string   `short:"X" long:"exclude-ext" description:"exclude specific file extensions (comma-separated)" default-mask:"-"`
+	IncludeFiles        []string `long:"files" description:"search only files whose name matches GLOB" value-name:"GLOB" default-mask:"-"`
+	ExcludeFiles        []string `long:"exclude-files" description:"do not select files whose name matches GLOB while recursing" value-name:"GLOB" default-mask:"-"`
+	IncludePath         string   `long:"path" description:"search only files whose path matches PATTERN" value-name:"PATTERN" default-mask:"-"`
+	IncludeIPath        string   `long:"ipath" description:"search only files whose path matches PATTERN (case insensitive)" value-name:"PATTERN" default-mask:"-"`
+	ExcludePath         string   `long:"exclude-path" description:"do not search files whose path matches PATTERN" value-name:"PATTERN" default-mask:"-"`
+	ExcludeIPath        string   `long:"exclude-ipath" description:"do not search files whose path matches PATTERN (case insensitive)" value-name:"PATTERN" default-mask:"-"`
+	IncludeTypes        string   `short:"t" long:"type" description:"limit search to specific file types (comma-separated, see --list-types)" default-mask:"-"`
+	ExcludeTypes        string   `short:"T" long:"no-type" description:"exclude specific file types (comma-separated, --list-types)" default-mask:"-"`
+	FilesWithMatches    bool     `short:"l" long:"files-with-matches" description:"list files containing matches"`
+	FilesWithoutMatch   bool     `short:"L" long:"files-without-match" description:"list files containing no match"`
+	FollowSymlinks      bool     `long:"follow" description:"follow symlinks"`
+	Git                 bool     `long:"git" description:"respect .gitignore files and skip .git directories"`
+	GroupByFile         bool     `long:"group" description:"group output by file (default: off)"`
+	NoGroupByFile       func()   `long:"no-group" description:"do not group output by file" json:"-"`
+	IgnoreCase          bool     `short:"i" long:"ignore-case" description:"case insensitive (default: off)"`
+	NoIgnoreCase        func()   `short:"I" long:"no-ignore-case" description:"disable case insensitive" json:"-"`
+	SmartCase           bool     `short:"s" long:"smart-case" description:"case insensitive unless pattern contains uppercase characters (default: off)"`
+	NoSmartCase         func()   `short:"S" long:"no-smart-case" description:"disable smart case" json:"-"`
+	NoConfig            bool     `long:"no-conf" description:"do not load config files" json:"-"`
+	InvertMatch         bool     `short:"v" long:"invert-match" description:"select non-matching lines" json:"-"`
+	Limit               int64    `long:"limit" description:"only show first NUM matches per file" value-name:"NUM" default-mask:"-"`
+	Literal             bool     `short:"Q" long:"literal" description:"treat pattern as literal, quote meta characters"`
+	Multiline           bool     `short:"m" long:"multiline" description:"multiline parsing (default: off)"`
+	NoMultiline         func()   `short:"M" long:"no-multiline" description:"disable multiline parsing" json:"-"`
+	OnlyMatching        bool     `long:"only-matching" description:"only show the matching part of a line" json:"-"`
+	Output              string   `short:"o" long:"output" description:"write output to the specified file or network connection" value-name:"FILE|tcp://HOST:PORT" json:"-"`
+	OutputLimit         int      `long:"output-limit" description:"limit output length per found match" default-mask:"-"`
+	OutputSeparator     string   `long:"output-sep" description:"output separator (default: \"\\n\")" default-mask:"-" json:"-"`
+	OutputUnixPath      bool     `long:"output-unixpath" description:"output file paths in unix format ('/' as path separator)"`
+	Patterns            []string `short:"e" long:"regexp" description:"add pattern PATTERN to the search" value-name:"PATTERN" default-mask:"-" json:"-"`
+	PatternFile         string   `short:"f" long:"regexp-file" description:"search for patterns contained in FILE (one per line)" value-name:"FILE" default-mask:"-" json:"-"`
+	PrintConfig         bool     `long:"print-config" description:"print config for loaded configs + given command line arguments" json:"-"`
+	Quiet               bool     `short:"q" long:"quiet" description:"suppress output, exit with return code zero if any match is found" json:"-"`
+	Recursive           bool     `short:"r" long:"recursive" description:"recurse into directories (default: on)"`
+	NoRecursive         func()   `short:"R" long:"no-recursive" description:"do not recurse into directories" json:"-"`
+	Replace             string   `long:"replace" description:"replace numbered or named (?P<name>pattern) capture groups. Use ${1}, ${2}, $name, ... for captured submatches" json:"-"`
+	ShowFilename        string
+	ShowFilenameFunc    func() `long:"filename" description:"enforce printing the filename before results (default: auto)" json:"-"`
+	NoShowFilenameFunc  func() `long:"no-filename" description:"disable printing the filename before results" json:"-"`
+	ShowLineNumbers     bool   `short:"n" long:"line-number" description:"show line numbers (default: off)"`
+	NoShowLineNumbers   func() `short:"N" long:"no-line-number" description:"do not show line numbers" json:"-"`
+	ShowColumnNumbers   bool   `long:"column" description:"show column numbers"`
+	NoShowColumnNumbers func() `long:"no-column" description:"do not show column numbers" json:"-"`
+	Stats               bool   `long:"stats" description:"show statistics"`
+	TargetsOnly         bool   `long:"targets" description:"only list selected files, do not search"`
+	ListTypes           func() `long:"list-types" description:"list available file types" json:"-" default-mask:"-"`
+	Version             func() `short:"V" long:"version" description:"show version and license information" json:"-"`
+	WordRegexp          bool   `short:"w" long:"word-regexp" description:"only match on ASCII word boundaries"`
+	WriteConfig         bool   `long:"write-config" description:"save config for loaded configs + given command line arguments" json:"-"`
+	Zip                 bool   `short:"z" long:"zip" description:"search content of compressed .gz files (default: off)"`
+	NoZip               func() `short:"Z" long:"no-zip" description:"do not search content of compressed .gz files" json:"-"`
 
 	FileConditions struct {
 		FileMatches     []string `long:"file-matches" description:"only show matches if file also matches PATTERN" value-name:"PATTERN"`
@@ -177,6 +184,9 @@ func (o *Options) LoadDefaults() {
 	o.NoIgnoreCase = func() {
 		o.IgnoreCase = false
 	}
+	o.NoSmartCase = func() {
+		o.SmartCase = false
+	}
 	o.NoGroupByFile = func() {
 		o.GroupByFile = false
 	}
@@ -194,6 +204,9 @@ func (o *Options) LoadDefaults() {
 	}
 	o.NoShowLineNumbers = func() {
 		o.ShowLineNumbers = false
+	}
+	o.NoShowColumnNumbers = func() {
+		o.ShowColumnNumbers = false
 	}
 	o.NoZip = func() {
 		o.Zip = false
@@ -271,7 +284,7 @@ func (o *Options) Apply(patterns []string, targets []string) error {
 		return err
 	}
 
-	if err := o.checkCompatibility(targets); err != nil {
+	if err := o.checkCompatibility(patterns, targets); err != nil {
 		return err
 	}
 
@@ -281,7 +294,7 @@ func (o *Options) Apply(patterns []string, targets []string) error {
 		return err
 	}
 
-	o.performAutoDetections(targets)
+	o.performAutoDetections(patterns, targets)
 
 	if o.Quiet {
 		global.outputFile = ioutil.Discard
@@ -308,11 +321,25 @@ func (o *Options) checkFormats() error {
 			return fmt.Errorf("cannot parse exclude filepath pattern '%s': %s\n", o.ExcludePath, err)
 		}
 	}
+	if o.ExcludeIPath != "" {
+		var err error
+		global.excludeFilepathRegex, err = regexp.Compile("(?i)" + o.ExcludeIPath)
+		if err != nil {
+			return fmt.Errorf("cannot parse exclude filepath pattern '%s': %s\n", o.ExcludeIPath, err)
+		}
+	}
 	if o.IncludePath != "" {
 		var err error
 		global.includeFilepathRegex, err = regexp.Compile(o.IncludePath)
 		if err != nil {
 			return fmt.Errorf("cannot parse filepath pattern '%s': %s\n", o.IncludePath, err)
+		}
+	}
+	if o.IncludeIPath != "" {
+		var err error
+		global.includeFilepathRegex, err = regexp.Compile("(?i)" + o.IncludeIPath)
+		if err != nil {
+			return fmt.Errorf("cannot parse filepath pattern '%s': %s\n", o.IncludeIPath, err)
 		}
 	}
 
@@ -515,7 +542,7 @@ func (o *Options) processConditions() error {
 }
 
 // checkCompatibility checks options for incompatible combinations
-func (o *Options) checkCompatibility(targets []string) error {
+func (o *Options) checkCompatibility(patterns []string, targets []string) error {
 	stdinTargetFound := false
 	netTargetFound := false
 	for _, target := range targets {
@@ -577,20 +604,15 @@ func (o *Options) checkCompatibility(targets []string) error {
 		return errors.New("options 'only-matching' and 'replace' cannot be used together")
 	}
 
-	if len(global.conditions) == 0 {
-		global.streamingAllowed = true
+	if o.SmartCase && (len(patterns) > 1 || len(global.conditions) > 0) {
+		return errors.New("the smart case option cannot be used with multiple patterns or conditions")
+	}
 
-		if len(targets) == 1 {
-			if stdinTargetFound || netTargetFound {
-				global.streamingThreshold = 0
-				o.GroupByFile = false
-			} else {
-				stat, err := os.Stat(targets[0])
-				if err == nil && stat.Mode()&os.ModeType == 0 {
-					global.streamingThreshold = 0
-				}
-			}
-		}
+	if o.ExcludePath != "" && o.ExcludeIPath != "" {
+		return errors.New("options 'exclude-path' and 'exclude-ipath' cannot be used together")
+	}
+	if o.IncludePath != "" && o.IncludeIPath != "" {
+		return errors.New("options 'path' and 'ipath' cannot be used together")
 	}
 
 	return nil
@@ -648,7 +670,34 @@ func (o *Options) processConfigOptions() error {
 }
 
 // performAutoDetections sets options that are set to "auto"
-func (o *Options) performAutoDetections(targets []string) {
+func (o *Options) performAutoDetections(patterns []string, targets []string) {
+	stdinTargetFound := false
+	netTargetFound := false
+	for _, target := range targets {
+		switch {
+		case target == "-":
+			stdinTargetFound = true
+		case global.netTcpRegex.MatchString(target):
+			netTargetFound = true
+		}
+	}
+
+	if len(global.conditions) == 0 {
+		global.streamingAllowed = true
+
+		if len(targets) == 1 {
+			if stdinTargetFound || netTargetFound {
+				global.streamingThreshold = 0
+				o.GroupByFile = false
+			} else {
+				stat, err := os.Stat(targets[0])
+				if err == nil && stat.Mode()&os.ModeType == 0 {
+					global.streamingThreshold = 0
+				}
+			}
+		}
+	}
+
 	if o.ShowFilename == "auto" {
 		if len(targets) == 1 {
 			fileinfo, err := os.Stat(targets[0])
@@ -678,6 +727,14 @@ func (o *Options) performAutoDetections(targets []string) {
 	if o.GroupByFile {
 		if !terminal.IsTerminal(int(os.Stdout.Fd())) {
 			o.GroupByFile = false
+		}
+	}
+
+	if !o.IgnoreCase && o.SmartCase {
+		if len(patterns) >= 1 {
+			if m, _ := regexp.MatchString("[A-Z]", patterns[0]); !m {
+				o.IgnoreCase = true
+			}
 		}
 	}
 
