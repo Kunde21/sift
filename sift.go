@@ -31,9 +31,9 @@ import (
 	"sync"
 	"time"
 
+	"github.com/Kunde21/sift/gitignore"
 	"github.com/svent/go-flags"
 	"github.com/svent/go-nbreader"
-	"github.com/svent/sift/gitignore"
 	"golang.org/x/crypto/ssh/terminal"
 )
 
@@ -48,7 +48,7 @@ const (
 	MultilinePipeChunkTimeout = 150 * time.Millisecond
 	// MaxDirRecursionRoutines is the maximum number of parallel routines used
 	// to recurse into directories
-	MaxDirRecursionRoutines = 3
+	MaxDirRecursionRoutines = 6
 	SiftConfigFile          = ".sift.conf"
 	SiftVersion             = "0.8.0"
 )
